@@ -44,12 +44,14 @@ class App extends React.Component {
     });
   }
   componentWillMount() {
-    /*fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&order=market_cap_desc&per_page=20&page=1&sparkline=false")
+    /*fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + this.state.currency + "&order=market_cap_desc&per_page=20&page=1&sparkline=false")
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-
+      this.setState({
+        cryptos: data
+      });
     })*/
   }
   render() {
@@ -59,7 +61,10 @@ class App extends React.Component {
           currency={this.state.currency} 
           currencyChange={this.handleCurrencyChange}
         />
-        <QuickView cryptos = { this.state.cryptos } />
+        <QuickView 
+          currency={this.state.currency}
+          cryptos={ this.state.cryptos } 
+        />
         <Form className="d-flex mt-3">
           <FormControl
             type="search"
@@ -76,9 +81,15 @@ class App extends React.Component {
 }
 
 let Navigation = (props) => {
+  let currencyFlags = [
+    "https://img.icons8.com/color/48/000000/usa-circular.png", "https://img.icons8.com/color/48/000000/canada-circular.png",
+    "https://img.icons8.com/color/48/000000/japan-circular.png", "https://img.icons8.com/color/48/000000/euro-pound-exchange--v1.png",
+    "https://img.icons8.com/color/48/000000/great-britain-circular.png"
+  ]
   let currencies = ["usd", "cad", "jpy", "eur", "gbp"].map((currency, index) => {
     return (
-      <NavDropdown.Item key={ index } onClick={ () => props.currencyChange(currency) }>
+      <NavDropdown.Item key={ index } className="fw-bolder" onClick={ () => props.currencyChange(currency) }>
+        <img src={ currencyFlags[index] } className="me-4" />
         { currency.toUpperCase() }
       </NavDropdown.Item>
     );
@@ -113,7 +124,7 @@ let QuickView = (props) => {
           <Card.Img variant="top" src={ crypto.imageUrl } style={{ width: '100px', display: 'block', margin: 'auto' }}/>
           <Card.Body>
             <Card.Title as="h1">{ crypto.name }</Card.Title>
-            <Card.Text>Price value in USD</Card.Text>
+            <Card.Text>Price value in { props.currency.toUpperCase() }</Card.Text>
             <small>Last updated: 5 mins ago</small>
           </Card.Body>
         </Card>
