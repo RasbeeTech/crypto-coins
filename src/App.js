@@ -42,14 +42,14 @@ class App extends React.Component {
       let cleanedData = data.map((obj) => {
         return {
           name: obj.name,
-          symbol: obj.symbol,
+          symbol: obj.symbol.toUpperCase(),
           imageUrl: obj.image,
-          value: obj.current_price,
-          update: obj.last_updated,
-          dayChange: obj.price_change_24h,
-          dayChangePercent: obj.price_change_percentage_24h,
-          dayHigh: obj.high_24h,
-          dayLow: obj.low_24h
+          value: obj.current_price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          update: new Date(obj.last_updated).toUTCString(),
+          dayChange: obj.price_change_24h.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          dayChangePercent: obj.price_change_percentage_24h.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          dayHigh: obj.high_24h.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          dayLow: obj.low_24h.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         }
       });
       this.setState({
@@ -61,12 +61,12 @@ class App extends React.Component {
     return (
       <Container>
         <Navigation
-          currency={this.state.currency} 
-          currencyChange={this.handleCurrencyChange}
+          currency={ this.state.currency } 
+          currencyChange={ this.handleCurrencyChange }
         />
         <QuickView 
-          currency={this.state.currency}
-          cryptos={ this.state.cryptos.slice(0, 5) } 
+          currency={ this.state.currency }
+          cryptos={ this.state.cryptos.slice(0, 7) } 
         />
         <Form className="d-flex mt-3">
           <FormControl
@@ -78,8 +78,8 @@ class App extends React.Component {
           <Button variant="outline-light bg-secondary">Search</Button>
         </Form>
         <ViewAll 
-          currency={this.state.currency}
-          cryptos={this.state.cryptos}
+          currency={ this.state.currency }
+          cryptos={ this.state.cryptos }
         />
       </Container>
     );
@@ -131,7 +131,7 @@ let QuickView = (props) => {
           <Card.Body>
             <Card.Title as="h1">{ crypto.name }</Card.Title>
             <Card.Text>Price value in { props.currency.toUpperCase() }</Card.Text>
-            <small>Last updated: { crypto.update }</small>
+            <small>Last updated:< br/>{ crypto.update }</small>
           </Card.Body>
         </Card>
       </Carousel.Item>
@@ -145,17 +145,9 @@ let QuickView = (props) => {
 }
 
 let ViewAll = (props) => {
-  /*
-          name: obj.name,
-          symbol: obj.symbol,
-          imageUrl: obj.image,
-          value: obj.current_price,
-          update: obj.last_updated,
-          dayChange: obj.price_change_24h,
-          dayChangePercent: obj.price_change_percentage_24h,
-          dayHigh: obj.high_24h,
-          dayLow: obj.low_24h
-  */
+  let colorIndicators = (value) => {
+    return value >= 0 ? "text-success" : "text-danger";
+  }
   let data = props.cryptos.map( (obj, index) => {
     return (
       <tr>
@@ -163,28 +155,28 @@ let ViewAll = (props) => {
         <td>{ obj.name }</td>
         <td>{ obj.symbol}</td>
         <td>{ obj.value }</td>
-        <td>{ obj.dayChange }</td>
-        <td>{ obj.dayChangePercent }</td>
-        <td>{ obj.dayHigh }</td>
+        <td className={ colorIndicators(obj.dayChange) }>{ obj.dayChange }</td>
+        <td className={ colorIndicators(obj.dayChangePercent) }>{ obj.dayChangePercent }</td>
         <td>{ obj.dayLow }</td>
+        <td>{ obj.dayHigh }</td>
         <td>{ obj.update }</td>
       </tr>
     );
   });
   return (
-    <Table striped bordered hover variant="dark" className="mt-2" id="viewAll">
-          <thead>
+    <Table responsive striped bordered hover variant="dark" className="mt-2" id="viewAll">
+          <thead className="text-center">
             <th>#</th>
             <th>Name</th>
             <th>Symbol</th>
             <th>{ "Value (" + props.currency.toUpperCase() + ")" }</th>
             <th>24h change ($)</th>
             <th>24h change (%)</th>
-            <th>24h high</th>
             <th>24h low</th>
-            <th>last updated</th>
+            <th>24h high</th>
+            <th>Last updated</th>
           </thead>
-          <tbody>
+          <tbody className="text-center">
             { data }
           </tbody>
         </Table>
