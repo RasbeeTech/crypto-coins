@@ -37,6 +37,7 @@ class App extends React.Component {
   render() {
     return (
       <Container fluid>
+        <div className="h1 text-light text-center py-3">Crypto-Coins</div>
         <QuickView cryptos = { this.state.cryptos } />
         <Navigation />
         <div>
@@ -49,7 +50,7 @@ class App extends React.Component {
 
 let Navigation = (props) => {
   return (
-    <Navbar bg="secondary" expand="lg">
+    <Navbar bg="secondary" expand="lg" className="mt-2">
       <Container>
         <Navbar.Brand href="#home">Crypto-Coins</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
