@@ -18,23 +18,13 @@ class App extends React.Component {
     super(props);
     this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
     this.state = {
-      currency: "usd",
+      currency: "cad",
       cryptos: [
         {
           name: "Bitcoin",
           imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/480px-Bitcoin.svg.png",
           infoUrl: "https://bitcoin.org" 
         },
-        {
-          name: "Ethereum",
-          imageUrl: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Ethereum-icon-purple.svg",
-          infoUrl: "https://ethereum.org"
-        },
-        {
-          name: "Dogecoin",
-          imageUrl: "https://upload.wikimedia.org/wikipedia/en/d/d0/Dogecoin_Logo.png",
-          infoUrl: "https://dogecoin.com/"
-        }
       ]
     };
   }
@@ -44,15 +34,28 @@ class App extends React.Component {
     });
   }
   componentWillMount() {
-    /*fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + this.state.currency + "&order=market_cap_desc&per_page=20&page=1&sparkline=false")
+    fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + this.state.currency + "&order=market_cap_desc&per_page=20&page=1&sparkline=false")
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      this.setState({
-        cryptos: data
+      let cleanedData = data.map((obj) => {
+        return {
+          name: obj.name,
+          symbol: obj.symbol,
+          imageUrl: obj.image,
+          value: obj.current_price,
+          update: obj.last_updated,
+          dayChange: obj.price_change_24h,
+          dayChangePercent: obj.price_change_percentage_24h,
+          dayHigh: obj.high_24h,
+          dayLow: obj.low_24h
+        }
       });
-    })*/
+      this.setState({
+        cryptos: cleanedData
+      });
+    })
   }
   render() {
     return (
@@ -63,7 +66,7 @@ class App extends React.Component {
         />
         <QuickView 
           currency={this.state.currency}
-          cryptos={ this.state.cryptos } 
+          cryptos={ this.state.cryptos.slice(0, 5) } 
         />
         <Form className="d-flex mt-3">
           <FormControl
@@ -74,7 +77,10 @@ class App extends React.Component {
           />
           <Button variant="outline-light bg-secondary">Search</Button>
         </Form>
-        <ViewAll />
+        <ViewAll 
+          currency={this.state.currency}
+          cryptos={this.state.cryptos}
+        />
       </Container>
     );
   }
@@ -125,7 +131,7 @@ let QuickView = (props) => {
           <Card.Body>
             <Card.Title as="h1">{ crypto.name }</Card.Title>
             <Card.Text>Price value in { props.currency.toUpperCase() }</Card.Text>
-            <small>Last updated: 5 mins ago</small>
+            <small>Last updated: { crypto.update }</small>
           </Card.Body>
         </Card>
       </Carousel.Item>
@@ -139,25 +145,47 @@ let QuickView = (props) => {
 }
 
 let ViewAll = (props) => {
+  /*
+          name: obj.name,
+          symbol: obj.symbol,
+          imageUrl: obj.image,
+          value: obj.current_price,
+          update: obj.last_updated,
+          dayChange: obj.price_change_24h,
+          dayChangePercent: obj.price_change_percentage_24h,
+          dayHigh: obj.high_24h,
+          dayLow: obj.low_24h
+  */
+  let data = props.cryptos.map( (obj, index) => {
+    return (
+      <tr>
+        <td>{ index + 1 }</td>
+        <td>{ obj.name }</td>
+        <td>{ obj.symbol}</td>
+        <td>{ obj.value }</td>
+        <td>{ obj.dayChange }</td>
+        <td>{ obj.dayChangePercent }</td>
+        <td>{ obj.dayHigh }</td>
+        <td>{ obj.dayLow }</td>
+        <td>{ obj.update }</td>
+      </tr>
+    );
+  });
   return (
     <Table striped bordered hover variant="dark" className="mt-2" id="viewAll">
           <thead>
             <th>#</th>
             <th>Name</th>
             <th>Symbol</th>
-            <th>24h</th>
-            <th>7d</th>
-            <th>YTD</th>
+            <th>{ "Value (" + props.currency.toUpperCase() + ")" }</th>
+            <th>24h change ($)</th>
+            <th>24h change (%)</th>
+            <th>24h high</th>
+            <th>24h low</th>
+            <th>last updated</th>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Bitcoin</td>
-              <td>BTC</td>
-              <td>+5%</td>
-              <td>+20%</td>
-              <td>+25%</td>
-            </tr>
+            { data }
           </tbody>
         </Table>
   )
