@@ -4,10 +4,11 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button'
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 import Carousel from 'react-bootstrap/Carousel';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form'
-import FormControl from 'react-bootstrap/FormControl'
+import FormControl from 'react-bootstrap/FormControl';
 import Table from 'react-bootstrap/Table';
 
 import './App.css';
@@ -15,7 +16,9 @@ import './App.css';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
     this.state = {
+      currency: "usd",
       cryptos: [
         {
           name: "Bitcoin",
@@ -35,10 +38,27 @@ class App extends React.Component {
       ]
     };
   }
+  handleCurrencyChange(newCurrency) {
+    this.setState({
+      currency: newCurrency
+    });
+  }
+  componentWillMount() {
+    /*fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&order=market_cap_desc&per_page=20&page=1&sparkline=false")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+
+    })*/
+  }
   render() {
     return (
       <Container>
-        <Navigation />
+        <Navigation
+          currency={this.state.currency} 
+          currencyChange={this.handleCurrencyChange}
+        />
         <QuickView cryptos = { this.state.cryptos } />
         <Form className="d-flex mt-3">
           <FormControl
@@ -56,19 +76,28 @@ class App extends React.Component {
 }
 
 let Navigation = (props) => {
+  let currencies = ["usd", "cad", "jpy", "eur", "gbp"].map((currency, index) => {
+    return (
+      <NavDropdown.Item key={ index } onClick={ () => props.currencyChange(currency) }>
+        { currency.toUpperCase() }
+      </NavDropdown.Item>
+    );
+  }); 
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="mt-2 border border-secondary">
       <Container>
-        <Navbar.Brand>
-          <img src="https://img.icons8.com/wired/64/000000/currency.png" style={{ width:"35px" }}/>
+        <Navbar.Brand className="fw-bold">
+          <img src="https://img.icons8.com/wired/64/000000/currency.png" className="me-2 w-25" />
           Crypto-Coins
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav" className="me-auto">
           <Nav>
             <Nav.Link href="#viewAll">View All</Nav.Link>
             <Nav.Link href="#info">Info</Nav.Link>
-            <Nav.Link href="#currency">Currency</Nav.Link>
+            <NavDropdown title={"Currency (" + props.currency.toUpperCase() + ")"}>
+              { currencies }
+            </NavDropdown>
           </Nav>
         </Navbar.Collapse>
       </Container>
