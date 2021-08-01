@@ -21,13 +21,7 @@ class App extends React.Component {
     this.state = {
       currency: "cad",
       dataLoaded: false,
-      cryptos: [
-        {
-          name: "Bitcoin",
-          imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/480px-Bitcoin.svg.png",
-          infoUrl: "https://bitcoin.org" 
-        },
-      ]
+      cryptos: []
     };
   }
   handleCurrencyChange(newCurrency) {
@@ -41,6 +35,20 @@ class App extends React.Component {
     this.fetchData();
   }
   fetchData() {
+    const formatDate = (dateString) => {
+      let d = new Date(dateString);
+      let now = new Date();
+      return [
+        d.getMonth() + 1,
+        d.getDate(),
+        d.getFullYear()
+      ].join("/") + " " + [
+        d.getHours(),
+        d.getMinutes() > 10 ? d.getMinutes() : "0" + d.getMinutes(),
+        d.getSeconds() > 10 ? d.getSeconds() : "0" + d.getSeconds()
+      ].join(":");
+    };
+
     fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + this.state.currency + "&order=market_cap_desc&per_page=20&page=1&sparkline=false")
     .then((response) => {
       return response.json();
@@ -52,7 +60,7 @@ class App extends React.Component {
           symbol: obj.symbol.toUpperCase(),
           imageUrl: obj.image,
           value: obj.current_price,
-          update: new Date(obj.last_updated).toUTCString(),
+          update: formatDate(obj.last_updated),
           dayChange: obj.price_change_24h,
           dayChangePercent: obj.price_change_percentage_24h,
           dayHigh: obj.high_24h,
@@ -76,15 +84,7 @@ class App extends React.Component {
           currency={ this.state.currency }
           cryptos={ this.state.cryptos.slice(0, 7) } 
         />
-        <Form className="d-flex mt-3">
-          <FormControl
-            type="search"
-            placeholder="Search"
-            className="mr-2"
-            aria-label="Search"
-          />
-          <Button variant="outline-light bg-secondary">Search</Button>
-        </Form>
+        <Search />
         {
         this.state.dataLoaded && 
           <ViewAll 
@@ -195,6 +195,20 @@ const ViewAll = (props) => {
           </tbody>
         </Table>
   )
+}
+
+const Search = (props) => {
+  return (
+    <Form className="d-flex mt-3">
+      <FormControl
+        type="search"
+        placeholder="Search"
+        className="mr-2"
+        aria-label="Search"
+      />
+      <Button variant="outline-light bg-secondary">Search</Button>
+    </Form>
+  );
 }
 
 export default App;
