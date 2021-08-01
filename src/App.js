@@ -17,6 +17,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
+    this.fetchData = this.fetchData.bind(this);
     this.state = {
       currency: "cad",
       cryptos: [
@@ -31,29 +32,34 @@ class App extends React.Component {
   handleCurrencyChange(newCurrency) {
     this.setState({
       currency: newCurrency
+    }, () => {
+      this.fetchData();
     });
   }
   componentWillMount() {
+    this.fetchData();
+  }
+  fetchData() {
     fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + this.state.currency + "&order=market_cap_desc&per_page=20&page=1&sparkline=false")
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      let cleanedData = data.map((obj) => {
+      let cleanData = data.map((obj) => {
         return {
           name: obj.name,
           symbol: obj.symbol.toUpperCase(),
           imageUrl: obj.image,
-          value: obj.current_price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          value: obj.current_price,
           update: new Date(obj.last_updated).toUTCString(),
-          dayChange: obj.price_change_24h.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          dayChangePercent: obj.price_change_percentage_24h.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          dayHigh: obj.high_24h.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          dayLow: obj.low_24h.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          dayChange: obj.price_change_24h.toFixed(2),
+          dayChangePercent: obj.price_change_percentage_24h.toFixed(2),
+          dayHigh: obj.high_24h,
+          dayLow: obj.low_24h
         }
       });
       this.setState({
-        cryptos: cleanedData
+        cryptos: cleanData
       });
     })
   }
@@ -146,7 +152,10 @@ let QuickView = (props) => {
 
 let ViewAll = (props) => {
   let colorIndicators = (value) => {
-    return value >= 0 ? "text-success" : "text-danger";
+    return value > 0 ? "text-success" : "text-danger";
+  }
+  let formatCurrency = (num) => {
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
   let data = props.cryptos.map( (obj, index) => {
     return (
