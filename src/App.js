@@ -20,6 +20,7 @@ class App extends React.Component {
     this.fetchData = this.fetchData.bind(this);
     this.state = {
       currency: "cad",
+      dataLoaded: false,
       cryptos: [
         {
           name: "Bitcoin",
@@ -59,7 +60,8 @@ class App extends React.Component {
         }
       });
       this.setState({
-        cryptos: cleanData
+        dataLoaded: true,
+        cryptos: cleanData,
       });
     })
   }
@@ -83,10 +85,13 @@ class App extends React.Component {
           />
           <Button variant="outline-light bg-secondary">Search</Button>
         </Form>
-        <ViewAll 
+        {
+        this.state.dataLoaded && 
+          <ViewAll 
           currency={ this.state.currency }
           cryptos={ this.state.cryptos }
-        />
+          />
+        }
       </Container>
     );
   }
@@ -155,7 +160,7 @@ let ViewAll = (props) => {
     return value > 0 ? "text-success" : "text-danger";
   }
   let formatCurrency = (num) => {
-    return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
   let data = props.cryptos.map( (obj, index) => {
     return (
@@ -163,7 +168,7 @@ let ViewAll = (props) => {
         <td>{ index + 1 }</td>
         <td>{ obj.name }</td>
         <td>{ obj.symbol}</td>
-        <td>{ obj.value }</td>
+        <td>{ formatCurrency(obj.value) }</td>
         <td className={ colorIndicators(obj.dayChange) }>{ obj.dayChange }</td>
         <td className={ colorIndicators(obj.dayChangePercent) }>{ obj.dayChangePercent }</td>
         <td>{ obj.dayLow }</td>
