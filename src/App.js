@@ -11,8 +11,6 @@ import Form from 'react-bootstrap/Form'
 import FormControl from 'react-bootstrap/FormControl';
 import Table from 'react-bootstrap/Table';
 
-import './App.css';
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -127,7 +125,6 @@ const Navigation = (props) => {
         <Navbar.Collapse id="basic-navbar-nav" className="me-auto">
           <Nav>
             <Nav.Link href="#viewAll">View All</Nav.Link>
-            <Nav.Link href="#info">Info</Nav.Link>
             <NavDropdown title={"Currency (" + props.currency.toUpperCase() + ")"}>
               { currencies }
             </NavDropdown>
