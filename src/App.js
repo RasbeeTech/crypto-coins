@@ -53,8 +53,8 @@ class App extends React.Component {
           imageUrl: obj.image,
           value: obj.current_price,
           update: new Date(obj.last_updated).toUTCString(),
-          dayChange: obj.price_change_24h.toFixed(2),
-          dayChangePercent: obj.price_change_percentage_24h.toFixed(2),
+          dayChange: obj.price_change_24h,
+          dayChangePercent: obj.price_change_percentage_24h,
           dayHigh: obj.high_24h,
           dayLow: obj.low_24h
         }
@@ -106,7 +106,7 @@ const Navigation = (props) => {
   const currencies = ["usd", "cad", "jpy", "eur", "gbp"].map((currency, index) => {
     return (
       <NavDropdown.Item key={ index } className="fw-bolder" onClick={ () => props.currencyChange(currency) }>
-        <img src={ currencyFlags[index] } className="me-4" />
+        <img src={ currencyFlags[index] } className="me-4" alt={ currency[index] + " currency logo" } />
         { currency.toUpperCase() }
       </NavDropdown.Item>
     );
@@ -115,7 +115,7 @@ const Navigation = (props) => {
     <Navbar bg="dark" variant="dark" expand="lg" className="mt-2 border border-secondary">
       <Container>
         <Navbar.Brand className="fw-bold">
-          <img src="https://img.icons8.com/wired/64/000000/currency.png" className="me-2 w-25" />
+          <img src="https://img.icons8.com/wired/64/000000/currency.png" className="me-2 w-25" alt="Crypto-Coins logo" />
           Crypto-Coins
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -138,7 +138,7 @@ const QuickView = (props) => {
     return (
       <Carousel.Item key = { index }>
         <Card bg="dark" className="text-center text-light border border-secondary py-5">
-          <Card.Img variant="top" src={ crypto.imageUrl } style={{ width: '100px', display: 'block', margin: 'auto' }}/>
+          <Card.Img variant="top" src={ crypto.imageUrl } alt={crypto.name + " logo"} style={{ width: '100px', display: 'block', margin: 'auto' }}/>
           <Card.Body>
             <Card.Title as="h1">{ crypto.name }</Card.Title>
             <Card.Text>Price value in { props.currency.toUpperCase() }</Card.Text>
@@ -166,13 +166,13 @@ const ViewAll = (props) => {
     return (
       <tr key={ index }>
         <td>{ index + 1 }</td>
-        <td>{ obj.name }</td>
+        <td>< img src={ obj.imageUrl } alt={obj.name + " logo"} style={{ width: '20px' }} className="me-2" />{ obj.name }</td>
         <td>{ obj.symbol}</td>
         <td>{ formatCurrency(obj.value) }</td>
-        <td className={ colorIndicators(obj.dayChange) }>{ obj.dayChange }</td>
-        <td className={ colorIndicators(obj.dayChangePercent) }>{ obj.dayChangePercent }</td>
-        <td>{ obj.dayLow }</td>
-        <td>{ obj.dayHigh }</td>
+        <td className={ colorIndicators(obj.dayChange) }>{ formatCurrency(obj.dayChange) }</td>
+        <td className={ colorIndicators(obj.dayChangePercent) }>{ formatCurrency(obj.dayChangePercent) }</td>
+        <td>{ formatCurrency(obj.dayLow) }</td>
+        <td>{ formatCurrency(obj.dayHigh) }</td>
         <td>{ obj.update }</td>
       </tr>
     );
