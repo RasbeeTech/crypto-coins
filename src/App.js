@@ -41,7 +41,6 @@ class App extends React.Component {
   fetchData() {
     const formatDate = (dateString) => {
       let d = new Date(dateString);
-      let now = new Date();
       return [
         d.getMonth() + 1,
         d.getDate(),
@@ -53,7 +52,7 @@ class App extends React.Component {
       ].join(":");
     };
 
-    fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + this.state.currency + "&order=market_cap_desc&per_page=20&page=1&sparkline=false")
+    fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + this.state.currency + "&order=market_cap_desc&per_page=100&page=1&sparkline=false")
     .then((response) => {
       return response.json();
     })
