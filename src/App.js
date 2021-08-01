@@ -18,6 +18,7 @@ class App extends React.Component {
     super(props);
     this.handleCurrencyChange = this.handleCurrencyChange.bind(this);
     this.fetchData = this.fetchData.bind(this);
+    this.formatCurrency = this.formatCurrency.bind(this);
     this.state = {
       currency: "cad",
       dataLoaded: false,
@@ -30,6 +31,9 @@ class App extends React.Component {
     }, () => {
       this.fetchData();
     });
+  }
+  formatCurrency(num){
+    return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
   componentWillMount() {
     this.fetchData();
@@ -82,7 +86,8 @@ class App extends React.Component {
         />
         <QuickView 
           currency={ this.state.currency }
-          cryptos={ this.state.cryptos.slice(0, 7) } 
+          cryptos={ this.state.cryptos.slice(0, 7) }
+          formatCurrency={ this.formatCurrency }
         />
         <Search />
         {
@@ -90,6 +95,7 @@ class App extends React.Component {
           <ViewAll 
           currency={ this.state.currency }
           cryptos={ this.state.cryptos }
+          formatCurrency={ this.formatCurrency }
           />
         }
       </Container>
@@ -141,7 +147,7 @@ const QuickView = (props) => {
           <Card.Img variant="top" src={ crypto.imageUrl } alt={crypto.name + " logo"} style={{ width: '100px', display: 'block', margin: 'auto' }}/>
           <Card.Body>
             <Card.Title as="h1">{ crypto.name }</Card.Title>
-            <Card.Text>Price value in { props.currency.toUpperCase() }</Card.Text>
+            <Card.Text>{ "$" + props.formatCurrency(crypto.value).toString() + " " + props.currency.toUpperCase() }</Card.Text>
             <small>Last updated:< br/>{ crypto.update }</small>
           </Card.Body>
         </Card>
@@ -159,20 +165,17 @@ const ViewAll = (props) => {
   const colorIndicators = (value) => {
     return value > 0 ? "text-success" : "text-danger";
   }
-  const formatCurrency = (num) => {
-    return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
   const data = props.cryptos.map( (obj, index) => {
     return (
       <tr key={ index }>
         <td>{ index + 1 }</td>
         <td>< img src={ obj.imageUrl } alt={obj.name + " logo"} style={{ width: '20px' }} className="me-2" />{ obj.name }</td>
         <td>{ obj.symbol}</td>
-        <td>{ formatCurrency(obj.value) }</td>
-        <td className={ colorIndicators(obj.dayChange) }>{ formatCurrency(obj.dayChange) }</td>
-        <td className={ colorIndicators(obj.dayChangePercent) }>{ formatCurrency(obj.dayChangePercent) }</td>
-        <td>{ formatCurrency(obj.dayLow) }</td>
-        <td>{ formatCurrency(obj.dayHigh) }</td>
+        <td>{ props.formatCurrency(obj.value) }</td>
+        <td className={ colorIndicators(obj.dayChange) }>{ props.formatCurrency(obj.dayChange) }</td>
+        <td className={ colorIndicators(obj.dayChangePercent) }>{ props.formatCurrency(obj.dayChangePercent) }</td>
+        <td>{ props.formatCurrency(obj.dayLow) }</td>
+        <td>{ props.formatCurrency(obj.dayHigh) }</td>
         <td>{ obj.update }</td>
       </tr>
     );
