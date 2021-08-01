@@ -46,7 +46,7 @@ class App extends React.Component {
       return response.json();
     })
     .then((data) => {
-      let cleanData = data.map((obj) => {
+      const cleanData = data.map((obj) => {
         return {
           name: obj.name,
           symbol: obj.symbol.toUpperCase(),
@@ -97,13 +97,13 @@ class App extends React.Component {
   }
 }
 
-let Navigation = (props) => {
-  let currencyFlags = [
+const Navigation = (props) => {
+  const currencyFlags = [
     "https://img.icons8.com/color/48/000000/usa-circular.png", "https://img.icons8.com/color/48/000000/canada-circular.png",
     "https://img.icons8.com/color/48/000000/japan-circular.png", "https://img.icons8.com/color/48/000000/euro-pound-exchange--v1.png",
     "https://img.icons8.com/color/48/000000/great-britain-circular.png"
   ]
-  let currencies = ["usd", "cad", "jpy", "eur", "gbp"].map((currency, index) => {
+  const currencies = ["usd", "cad", "jpy", "eur", "gbp"].map((currency, index) => {
     return (
       <NavDropdown.Item key={ index } className="fw-bolder" onClick={ () => props.currencyChange(currency) }>
         <img src={ currencyFlags[index] } className="me-4" />
@@ -133,7 +133,7 @@ let Navigation = (props) => {
   );
 }
 
-let QuickView = (props) => {
+const QuickView = (props) => {
   const quickViewItems = props.cryptos.map( (crypto, index) => {
     return (
       <Carousel.Item key = { index }>
@@ -155,16 +155,16 @@ let QuickView = (props) => {
   );
 }
 
-let ViewAll = (props) => {
-  let colorIndicators = (value) => {
+const ViewAll = (props) => {
+  const colorIndicators = (value) => {
     return value > 0 ? "text-success" : "text-danger";
   }
-  let formatCurrency = (num) => {
+  const formatCurrency = (num) => {
     return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
-  let data = props.cryptos.map( (obj, index) => {
+  const data = props.cryptos.map( (obj, index) => {
     return (
-      <tr>
+      <tr key={ index }>
         <td>{ index + 1 }</td>
         <td>{ obj.name }</td>
         <td>{ obj.symbol}</td>
